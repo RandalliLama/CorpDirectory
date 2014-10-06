@@ -1,0 +1,7 @@
+
+target :'Corp Directory' do
+    pod 'RestKit', '~> 0.23.3'
+    pod 'ADALiOS', '~> 1.0.2'
+    pod 'SDWebImage', '~>3.6'
+end
+
