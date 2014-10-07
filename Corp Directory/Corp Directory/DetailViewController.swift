@@ -1,45 +1,54 @@
 //
 //  DetailViewController.swift
-//  Corp Directory
+//  Proto1
 //
-//  Created by Rich Randall on 10/6/14.
+//  Created by Rich Randall on 9/30/14.
 //  Copyright (c) 2014 Rich Randall. All rights reserved.
 //
 
 import UIKit
 
-class DetailViewController: UIViewController {
+class DetailViewController: UITableViewController {
 
-    @IBOutlet weak var detailDescriptionLabel: UILabel!
-
-
-    var detailItem: AnyObject? {
-        didSet {
-            // Update the view.
-            self.configureView()
-        }
-    }
-
-    func configureView() {
-        // Update the user interface for the detail item.
-        if let detail: AnyObject = self.detailItem {
-            if let label = self.detailDescriptionLabel {
-                label.text = detail.valueForKey("timeStamp").description
-            }
-        }
-    }
+    var user : AADUser!
+    var userAttributes = Dictionary<String, String>()
+    var attributeKeys = Array<String>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        self.configureView()
+        self.userAttributes = user.getDisplayAttributes()
+        self.attributeKeys = Array<String>(self.userAttributes.keys)
+        self
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        if (userAttributes.count > 0) {
+            return 2
+        } else {
+            return 1
+        }
     }
 
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if (0 == section) {
+            return 1
+        } else {
+            return userAttributes.count
+        }
+    }
 
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var cell: UITableViewCell?
+        if (indexPath.section == 0) {
+            cell = tableView.dequeueReusableCellWithIdentifier("UserName", forIndexPath: indexPath) as? UITableViewCell
+            cell?.textLabel?.text = self.user.displayName
+            user.setImage(cell!.imageView!)
+        } else {
+            cell = tableView.dequeueReusableCellWithIdentifier("UserDetail", forIndexPath: indexPath) as? UITableViewCell
+            var index = indexPath.row
+            cell?.textLabel?.text = self.attributeKeys[index]
+            cell?.detailTextLabel?.text = self.userAttributes[self.attributeKeys[index]]
+        }
+        return cell!
+    }
 }
-
